@@ -3,11 +3,21 @@
 // const {writeFile, copyFile } = require('./utils/generate-site.js');
 const inquirer = require('inquirer');
 
+const Manager = require('./lib/Manager.js');
+const Engineer = require('./lib/Engineer.js');
+const Intern = require('./lib/Intern.js');
+
+
 // turns the fucntion  in  page-template in to generatepage
 const generatePage = require('./src/page-template');
+const { writeFile } = require('./utils/generate-page.js');
 
-const promptUser = () => {
-return inquirer.prompt([
+const teamArray = [];
+
+
+
+const promptManager = () => {
+  return inquirer.prompt([
   {
     type: 'input',
     name: 'name',
@@ -28,8 +38,8 @@ return inquirer.prompt([
     name: 'id',
     message: 'Please enter your employee ID?',
 
-    validate: gitHubInput => {
-      if(gitHubInput){
+    validate: idInput => {
+      if(idInput){
       return true;
     } else {
       console.log("Please enter your employee ID?")
@@ -44,8 +54,8 @@ return inquirer.prompt([
     name: 'email',
     message: 'Please enter a email address.',
 
-    validate: gitHubInput => {
-      if(gitHubInput){
+    validate: emailInput => {
+      if(emailInput){
       return true;
     } else {
       console.log("Please enter a email address.")
@@ -60,8 +70,8 @@ return inquirer.prompt([
     name: 'officeNumber',
     message: 'Please enter a office number address',
 
-    validate: gitHubInput => {
-      if(gitHubInput){
+    validate: officeNumberInput => {
+      if(officeNumberInput){
       return true;
     } else {
       console.log("Please enter your github username!")
@@ -70,131 +80,155 @@ return inquirer.prompt([
     }
 
   }
-  ,
-  {
-    type: 'confirm',
-    name: 'confirmAbout',
-    message: 'Would you like to enter some information about yourself for an "About" section?',
-    default: true
-  },
-
-  {
-    type: 'input',
-    name: 'about',
-    message: 'Provide some information about yourself',
-    when: ({confirmAbout})=>{
-      if(confirmAbout){
-      return true
-    } else {
-      return false
-      } 
-    }
-  }
 
 ])
+.then((answers)=>{
+  const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber)
+  console.log(manager)
+  teamArray.push(manager)
+  
+
+
+})
+
 }
 
-// const promptTeam = teamData => {
- 
-//   console.log(`
-// =================
-// Add a New Project
-// =================
-// `);
-// // If there's no 'projects' array property, create one
-// if (!teamData.member) {
-//     teamData.member = [];
-// }
-
-//   // If there's no 'projects' array property, create one
-
-//   return inquirer
-//   .prompt([
-//     {
-//       type: 'input',
-//       name: 'name',
-//       message: 'what is the  name of your project? ',
-//       validate: NameInput =>{
-//         if(NameInput){
-//           return true
-//         } else{
-//           console.log('what is the  name of your project? ')
-//           return false
-//         }
-//       }
+const promptEmployee =()=>{
+  inquirer.prompt([
+    {
+      type: 'list',
+      name: 'EmployeeType',
+      message: `what type of employee would you like to create`,
+      choices: ['Engineer', 'Intern']
+    },
+    
+    {
+      type: 'input',
+      name: 'name',
+      message: `what is your Employee's name`,
+      validate: nameInput => {
+        if(nameInput){
+        return true;
+      } else {
+        console.log("Please enter your name!")
+        return false;
+        }
+      }
   
-//     }
-//     ,
-//     {
-//       type: 'input',
-//       name: 'description',
-//       message: 'Please provide a description of your project. (Required) ',
-//       validate: descriptionInput =>{
-//         if(descriptionInput){
-//           return true
-//         } else{
-//           console.log('Please provide a description of your project')
-//           return false
-//         }
-//       }
-//     }
-//     ,
-//     {
-//       type: 'checkbox',
-//       name: 'languages',
-//       message: 'What did you build this project with? (Check all that apply)',
-//       choices: ['Javascript', 'HTML','CSS', 'ES6','jQuery', 'Bootstrap', 'Node']
+    }
+    ,
+    {
+      type: 'input',
+      name: 'id',
+      message: 'Please enter your employee ID?',
   
-//     }
-//     ,
-//     {
-//       type: 'input',
-//       name: 'link',
-//       message: 'Enter the GitHub link to your project. (Required)',
-//       validate: linkInput =>{
-//         if(linkInput){
-//           return true
-//         } else{
-//           console.log('Enter the GitHub link to your project. (Required)')
-//           return false
-//         }
-//       }
-//     }
-//     ,
-//     {
-//       type: 'confirm',
-//       name: 'feature',
-//       message: 'Would you like to feature this project?',
-//       default: false
-//     },
-//     {
-//       type: 'confirm',
-//       name: 'confirmAddProject',
-//       message: 'Would you like to enter another project?',
-//       default: false
-//     }
-//   ])
-//   .then(projectData => { 
-//     portfolioData.projects.push(projectData);
-//     if (projectData.confirmAddProject) {
-//       return promptProject(portfolioData);
-//     } else {
-//       return portfolioData;
-//     }
-//   });
-
-//   };
-
+      validate: idInput => {
+        if(idInput){
+        return true;
+      } else {
+        console.log("Please enter your employee ID?")
+        return false;
+        }
+      }
   
+    }
+    ,
+    {
+      type: 'input',
+      name: 'email',
+      message: 'Please enter a email address.',
+  
+      validate: emailInput => {
+        if(emailInput){
+        return true;
+      } else {
+        console.log("Please enter a email address.")
+        return false;
+        }
+      }
+  
+    },
+
+    {
+      type: 'input',
+      name: 'github',
+      message: 'Provide your github username',
+      when: ({EmployeeType})=>{
+        if(EmployeeType === 'Engineer'){
+        return true
+      } else {
+        return false
+        } 
+      }
+    },
+    {
+      type: 'input',
+      name: 'school',
+      message: 'Provide your school name. ',
+      when: ({EmployeeType})=>{
+        if(EmployeeType ==='Intern'){
+        return true
+      } else {
+        return false
+        } 
+      }
+    },
+
+    {
+      type: 'confirm',
+      name: 'confirmAddEmployee',
+      message: 'Would you like to enter another Employee?',
+      default: false
+    }
+  ])
+  .then((answers)=>{
+    if(answers.EmployeeType ==='Engineer'){
+      const engineer = new Engineer (answers.name, answers.id, answers.email, answers.github)
+
+      teamArray.push(engineer)
+    } else{ const intern = new Intern (answers.name, answers.id, answers.email, answers.school)
+
+      teamArray.push(intern)
+    }
+
+    if(answers.confirmAddEmployee){
+      promptEmployee()
+    }else{writeFile(generatePage(teamArray))}
+    
+    return
+    
+
+  })
+  
+}
 
 
-promptUser()
-.then(consol)
 
 
 
 
-//   .then(promptProject)
+promptManager()
+.then(promptEmployee)
+
+
+
+
+
+// .then(()=>{
+//   (generatePage(teamArray))
+// })
+
+
+// .then(pageHTML=>{
+//   return writeFile(pageHTML)
+// })
+
+
+
+
+
+
+
 //   .then(portfolioData => {
 //     return generatePage(portfolioData);
 //   })
