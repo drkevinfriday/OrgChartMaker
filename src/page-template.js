@@ -65,8 +65,7 @@ const generateEngineer = aboutText => {
   
     let employeeInfo = ''
    for(let employee of templateData){
-     if(employee.getRole()=== 'Manager'){
-       
+     if(employee.getRole()=== 'Manager'){      
        employeeInfo += generateManager(employee)
      }
      if(employee.getRole()=== 'Engineer'){
